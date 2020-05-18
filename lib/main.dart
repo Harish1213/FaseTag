@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:face_tag/MVC/VIEWS/Login.Dart';
-
+ 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -10,9 +10,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       color: Colors.purpleAccent,
-      
       theme: ThemeData(
-        scaffoldBackgroundColor:Colors.yellow,
+        scaffoldBackgroundColor: Colors.yellow,
         primaryColor: Colors.red,
         primarySwatch: Colors.purpleAccent[300],
       ),
