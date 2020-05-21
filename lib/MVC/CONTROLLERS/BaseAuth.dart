@@ -1,5 +1,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 abstract class BaseAuth {
   Future<String> signIn(String email, String password);
@@ -55,5 +56,10 @@ class Auth implements BaseAuth {
     return user.isEmailVerified;
   }
 
+Future<bool> isUserAlreadyInDB(String id) async {
+  List userMethod = await _firebaseAuth.fetchSignInMethodsForEmail(email: id);
+    debugPrint('$userMethod');
+    return userMethod.length==0?false:true;
+}
   
 }

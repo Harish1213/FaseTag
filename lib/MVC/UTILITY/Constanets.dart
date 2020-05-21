@@ -1,4 +1,6 @@
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 enum ScreenDimantion {
@@ -63,8 +65,7 @@ Widget showCircularProgress(bool _isLoading) {
   }
 
 
-
- showGlobleDialog(BuildContext context,String title, String msg) {
+ showGlobleDialog(BuildContext context,String title, String msg,VoidCallback action ){
     // flutter defined function
 
     
@@ -82,6 +83,7 @@ Widget showCircularProgress(bool _isLoading) {
               child: new Text("Close"),
               onPressed: () {
                 Navigator.of(context).pop();
+                action();
               },
             ),
           ],

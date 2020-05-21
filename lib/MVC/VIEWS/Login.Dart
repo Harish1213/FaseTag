@@ -29,7 +29,7 @@ class _LoginState extends State<Login> {
   String _errorMessage = "";
   bool _isLoading = false;
   bool _isLoginForm = false;
-  String _alertEmail = '';
+  final Auth auth = Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +79,19 @@ class _LoginState extends State<Login> {
                 hintText: "Email",
                 border: InputBorder.none,
               ),
-              textInputAction: TextInputAction.next,
-              onSubmitted: (value) {
+              onEditingComplete: () async {
+                debugPrint('__________>');
+              },
+              onChanged: (value) async {
                 _email = value;
+                var result = await auth.isUserAlreadyInDB(_email);
+                if (result == true) {
+                  showGlobleDialog(
+                      _globleContext,
+                      '$_email',
+                      'Email already exiest in database',
+                      () => {debugPrint('__________>')});
+                }
                 debugPrint('EMAIL INIT');
               },
             ),
@@ -100,9 +110,8 @@ class _LoginState extends State<Login> {
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock),
                 hintText: "Password",
-                border: InputBorder.none,
               ),
-              onSubmitted: (value) {
+              onChanged: (value) {
                 _password = value;
                 debugPrint('PASSWORD INIT');
               },
@@ -253,21 +262,27 @@ class _LoginState extends State<Login> {
           )));
 
   void validateAndSubmit(bool _isLogin) async {
-    final Auth auth = Auth();
-
     showCircularProgress(true);
     if (validateAndSave()) {
       String userId = "";
+      auth.signOut();
       try {
         if (_isLogin) {
           userId = await auth.signIn(_email, _password);
+          var isVerified = auth.isEmailVerified();
+          if (isVerified == false) {
+            auth.sendEmailVerification();
+          }
           print('Signed in: $userId');
         } else {
           userId = await auth.signUp(_email, _password);
           auth.sendEmailVerification();
           //_showVerifyEmailSentDialog();
-          showGlobleDialog(_globleContext, 'Registration Sccess',
-              'Varification link deliverd to Your Email, Please varify your Email');
+          showGlobleDialog(
+              _globleContext,
+              'Registration Sccess',
+              'Varification link deliverd to Your Email, Please varify your Email',
+              null);
 
           print('Signed up user: $userId');
         }
@@ -277,7 +292,11 @@ class _LoginState extends State<Login> {
           //_isLoading = false;
           debugPrint('ERROR');
           _errorMessage = e.message;
-          showErrorMessage("uuuuuuuuuu");
+          showGlobleDialog(
+              _globleContext,
+              _isLogin ? 'Login Fail' : 'Registration Fail',
+              '$_errorMessage',
+              null);
           //_formKey.currentState.reset();
         });
       }
@@ -286,7 +305,8 @@ class _LoginState extends State<Login> {
       showGlobleDialog(
           _globleContext,
           _isLogin ? 'Login Fail' : 'Registration Fail',
-          'Please try after some time');
+          'Please try after some time',
+          null);
     }
   }
 
@@ -301,6 +321,7 @@ class _LoginState extends State<Login> {
 extension loginFunc on _LoginState {
   showAlert() {
     final Auth auth = Auth();
+    String _alertEmail = '';
 
     return showDialog(
         context: _globleContext,
@@ -347,14 +368,17 @@ extension loginFunc on _LoginState {
                               try {
                                 auth.sendPasswordEmail('$_alertEmail');
                                 Navigator.pop(_globleContext);
-                                showGlobleDialog(_globleContext, 'SCCESS',
-                                    'ReSet Password link deliverd to Your Email');
+                                showGlobleDialog(
+                                    _globleContext,
+                                    'SCCESS',
+                                    'ReSet Password link deliverd to Your Email',
+                                    null);
                               } catch (e) {
                                 showErrorMessage('dddd');
                                 Navigator.pop(_globleContext);
 
                                 showGlobleDialog(
-                                    _globleContext, 'error', 'eeee');
+                                    _globleContext, 'error', 'eeee', null);
                                 showCircularProgress(false);
                               }
                           },
