@@ -1,7 +1,7 @@
-import 'dart:ui';
-
 import 'package:face_tag/MVC/CONTROLLERS/BaseAuth.dart';
 import 'package:face_tag/MVC/UTILITY/Constanets.dart';
+import 'package:face_tag/MVC/UTILITY/Shared_preferences.dart';
+import 'package:face_tag/MVC/VIEWS/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:face_tag/MVC/UTILITY/Ext_String.dart';
@@ -30,6 +30,7 @@ class _LoginState extends State<Login> {
   bool _isLoading = false;
   bool _isLoginForm = false;
   final Auth auth = Auth();
+  final Shared pref = Shared();
 
   @override
   Widget build(BuildContext context) {
@@ -68,30 +69,35 @@ class _LoginState extends State<Login> {
             height: 20,
           ),
           Material(
+            color: Colors.transparent,
             child: TextField(
               cursorRadius: Radius.circular(30.0),
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.orange,
+                color: Colors.white,
               ),
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.person),
                 hintText: "Email",
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 2,
+                    style: BorderStyle.none,
+                  ),
+                ),
+                filled: true,
+                contentPadding: EdgeInsets.all(16),
+                fillColor: Colors.white30,
               ),
               onEditingComplete: () async {
                 debugPrint('__________>');
+                didResigineTextEditing();
               },
               onChanged: (value) async {
                 _email = value;
-                var result = await auth.isUserAlreadyInDB(_email);
-                if (result == true) {
-                  showGlobleDialog(
-                      _globleContext,
-                      '$_email',
-                      'Email already exiest in database',
-                      () => {debugPrint('__________>')});
-                }
+
                 debugPrint('EMAIL INIT');
               },
             ),
@@ -100,16 +106,28 @@ class _LoginState extends State<Login> {
             height: 20,
           ),
           Material(
+            color: Colors.transparent,
             child: TextField(
               cursorRadius: Radius.circular(30.0),
               obscureText: true,
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.orange,
+                color: Colors.white,
               ),
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock),
                 hintText: "Password",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 2,
+                    style: BorderStyle.none,
+                  ),
+                ),
+                filled: true,
+                contentPadding: EdgeInsets.all(16),
+                fillColor: Colors.white30,
               ),
               onChanged: (value) {
                 _password = value;
@@ -139,7 +157,7 @@ class _LoginState extends State<Login> {
                   Text(
                     "KeepLogin",
                     style: TextStyle(
-                        color: Colors.orange,
+                        color: Colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.none),
@@ -154,7 +172,7 @@ class _LoginState extends State<Login> {
                     'Forgot Password?',
                     textAlign: TextAlign.end,
                     style: TextStyle(
-                      color: Colors.orange,
+                      color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -179,8 +197,10 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         Expanded(
           child: RaisedButton(
+            color: Colors.orange.withAlpha(200),
+            textColor: Colors.white,
             onPressed: () {
-              didResigineText();
+              didResigineTextEditing();
               debugPrint('login hit');
               validateAndSubmit(true);
               //login block
@@ -195,8 +215,10 @@ class _LoginState extends State<Login> {
         ),
         Expanded(
           child: RaisedButton(
+            color: Colors.orange.withAlpha(200),
+            textColor: Colors.white,
             onPressed: () {
-              didResigineText();
+              didResigineTextEditing();
               debugPrint('Register hit');
               debugPrint('$_email');
               debugPrint('$_password');
@@ -273,23 +295,15 @@ class _LoginState extends State<Login> {
           if (isVerified == false) {
             auth.sendEmailVerification();
           }
+          moveToHome();
           print('Signed in: $userId');
         } else {
-          userId = await auth.signUp(_email, _password);
-          auth.sendEmailVerification();
-          //_showVerifyEmailSentDialog();
-          showGlobleDialog(
-              _globleContext,
-              'Registration Sccess',
-              'Varification link deliverd to Your Email, Please varify your Email',
-              null);
-
-          print('Signed up user: $userId');
+          registerInDB();
+          
         }
       } catch (e) {
         print('Error: $e');
         setState(() {
-          //_isLoading = false;
           debugPrint('ERROR');
           _errorMessage = e.message;
           showGlobleDialog(
@@ -297,7 +311,6 @@ class _LoginState extends State<Login> {
               _isLogin ? 'Login Fail' : 'Registration Fail',
               '$_errorMessage',
               null);
-          //_formKey.currentState.reset();
         });
       }
     } else {
@@ -316,7 +329,42 @@ class _LoginState extends State<Login> {
     }
     return false;
   }
-}
+
+   registerInDB() async {
+    var result = await auth.isUserAlreadyInDB(_email);
+    if (result == true) {
+      showGlobleDialog(
+          _globleContext,
+          '$_email',
+          'Email already exiest in database',
+          () => {debugPrint('__________>')}
+          );
+          return true;
+    }else{
+      var userId = await auth.signUp(_email, _password);
+          auth.sendEmailVerification();
+          //_showVerifyEmailSentDialog();
+          moveToHome();
+          showGlobleDialog(
+              _globleContext,
+              'Registration Sccess',
+              'Varification link deliverd to Your Email, Please varify your Email',
+              null);
+
+          print('Signed up user: $userId');
+            }
+    }
+  }
+
+  moveToHome() {
+
+    Navigator.push(
+      _globleContext,
+      MaterialPageRoute(builder: (context) => Home()),
+    );
+  }
+  
+
 
 extension loginFunc on _LoginState {
   showAlert() {
@@ -402,6 +450,6 @@ extension loginFunc on _LoginState {
 }
 
 BuildContext _globleContext;
-didResigineText() {
+didResigineTextEditing() {
   FocusScope.of(_globleContext).unfocus();
 }
