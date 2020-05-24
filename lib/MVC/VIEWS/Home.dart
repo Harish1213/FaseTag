@@ -1,5 +1,7 @@
+
 import 'package:face_tag/MVC/CONTROLLERS/BaseAuth.dart';
 import 'package:face_tag/MVC/VIEWS/Root.dart';
+import 'package:face_tag/MVC/VIEWS/SideMenu.dart';
 import 'package:flutter/material.dart';
 class Home extends StatefulWidget {
   @override
@@ -25,9 +27,12 @@ class _HomeState extends State<Home>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: SideMenu(),
       appBar: AppBar(
+        
         automaticallyImplyLeading:true,
         title :Text('Hoem'),
+      
         elevation:20,
         backgroundColor:Colors.orangeAccent,
        
@@ -44,7 +49,9 @@ class _HomeState extends State<Home>
               FlatButton(onPressed: (){
                 final Auth auth = Auth();
                 auth.signOut();
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Root(),fullscreenDialog: true)
+                Navigator.push(context, 
+                MaterialPageRoute(builder: (context)=>Root(),
+                fullscreenDialog: true)
                 ); 
 
                 
@@ -58,3 +65,4 @@ class _HomeState extends State<Home>
     );
   }
 }
+
