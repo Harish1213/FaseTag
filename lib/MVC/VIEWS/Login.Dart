@@ -369,7 +369,7 @@ class _LoginState extends State<Login> {
 
   moveToHome() {
     removeLoader();
-    Future.delayed(Duration(seconds: 2),(){
+    Future.delayed(Duration(seconds: 1),(){
       Navigator.push(
       _globleContext,
       MaterialPageRoute(builder: (context) => Home()),

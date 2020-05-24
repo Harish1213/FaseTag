@@ -44,11 +44,7 @@ class _HomeState extends State<Home>
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Wel Come'),
-              FlatButton(onPressed: (){
-                
-
-                
-              }, child: Text('SigenOut'))
+              
             ],
           ),
         ),

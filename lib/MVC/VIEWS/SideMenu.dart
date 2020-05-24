@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:face_tag/MVC/VIEWS/FeedBack.dart';
+import 'package:face_tag/MVC/VIEWS/Home.dart';
+import 'package:face_tag/MVC/VIEWS/Profile.dart';
 import 'package:face_tag/MVC/VIEWS/Root.dart';
+import 'package:face_tag/MVC/VIEWS/Settings.dart';
 import 'package:flutter/material.dart';
 import 'package:face_tag/MVC/CONTROLLERS/BaseAuth.dart';
 
@@ -28,22 +32,52 @@ class SideMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.rss_feed),
             title: Text('Feeds'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+
+              Future.delayed(Duration(milliseconds: 200), () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Home()));
+              });
+            },
           ),
           ListTile(
             leading: Icon(Icons.verified_user),
             title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+
+              Future.delayed(Duration(milliseconds: 200), () {
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Profile()));
+              });
+            },
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+              Future.delayed(Duration(milliseconds: 200), () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Settings()));
+              });
+            },
           ),
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+              Future.delayed(Duration(milliseconds: 200), () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FeedBack(),
+                        fullscreenDialog: true));
+              });
+            },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
@@ -64,4 +98,5 @@ class SideMenu extends StatelessWidget {
       ),
     );
   }
+
 }
