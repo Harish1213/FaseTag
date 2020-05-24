@@ -1,10 +1,12 @@
 import 'package:face_tag/MVC/CONTROLLERS/BaseAuth.dart';
 import 'package:face_tag/MVC/UTILITY/Constanets.dart';
+import 'package:face_tag/MVC/UTILITY/Dialoges.dart';
 import 'package:face_tag/MVC/UTILITY/Shared_preferences.dart';
 import 'package:face_tag/MVC/VIEWS/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:face_tag/MVC/UTILITY/Ext_String.dart';
+import 'package:face_tag/MVC/UTILITY/Dialoges.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -31,6 +33,7 @@ class _LoginState extends State<Login> {
   bool _isLoginForm = false;
   final Auth auth = Auth();
   final Shared pref = Shared();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
 
   @override
   Widget build(BuildContext context) {
@@ -284,10 +287,10 @@ class _LoginState extends State<Login> {
           )));
 
   void validateAndSubmit(bool _isLogin) async {
+    addLoader();
     showCircularProgress(true);
     if (validateAndSave()) {
-      String userId = "";
-      auth.signOut();
+      String userId = '';
       try {
         if (_isLogin) {
           userId = await auth.signIn(_email, _password);
@@ -299,14 +302,14 @@ class _LoginState extends State<Login> {
           print('Signed in: $userId');
         } else {
           registerInDB();
-          
         }
       } catch (e) {
+        removeLoader();
         print('Error: $e');
         setState(() {
           debugPrint('ERROR');
           _errorMessage = e.message;
-          showGlobleDialog(
+          Dialogs.showDialogTMC(
               _globleContext,
               _isLogin ? 'Login Fail' : 'Registration Fail',
               '$_errorMessage',
@@ -314,8 +317,9 @@ class _LoginState extends State<Login> {
         });
       }
     } else {
+      removeLoader();
       debugPrint('SOME THING WRING');
-      showGlobleDialog(
+      Dialogs.showDialogTMC(
           _globleContext,
           _isLogin ? 'Login Fail' : 'Registration Fail',
           'Please try after some time',
@@ -330,44 +334,53 @@ class _LoginState extends State<Login> {
     return false;
   }
 
-   registerInDB() async {
+  registerInDB() async {
     var result = await auth.isUserAlreadyInDB(_email);
     if (result == true) {
-      showGlobleDialog(
+      Dialogs.showDialogTMC(
           _globleContext,
           '$_email',
           'Email already exiest in database',
-          () => {debugPrint('__________>')}
-          );
-          return true;
-    }else{
+          () => {debugPrint('__________>')});
+      return true;
+    } else {
       var userId = await auth.signUp(_email, _password);
-          auth.sendEmailVerification();
-          //_showVerifyEmailSentDialog();
-          moveToHome();
-          showGlobleDialog(
-              _globleContext,
-              'Registration Sccess',
-              'Varification link deliverd to Your Email, Please varify your Email',
-              null);
+      auth.sendEmailVerification();
+      //_showVerifyEmailSentDialog();
+      moveToHome();
 
-          print('Signed up user: $userId');
-            }
+      Dialogs.showDialogTMC(
+          _globleContext,
+          'Registration Sccess',
+          'Varification link deliverd to Your Email, Please varify your Email',
+          null);
+
+      print('Signed up user: $userId');
     }
   }
 
-  moveToHome() {
+  removeLoader() {
+    Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+  }
 
-    Navigator.push(
+  addLoader() {
+    Dialogs.showLoadingDialog(context, _keyLoader);
+  }
+
+  moveToHome() {
+    removeLoader();
+    Future.delayed(Duration(seconds: 2),(){
+      Navigator.push(
       _globleContext,
       MaterialPageRoute(builder: (context) => Home()),
     );
+    });
+    
   }
-  
-
+}
 
 extension loginFunc on _LoginState {
-  showAlert() {
+   showAlert() {
     final Auth auth = Auth();
     String _alertEmail = '';
 
@@ -416,7 +429,7 @@ extension loginFunc on _LoginState {
                               try {
                                 auth.sendPasswordEmail('$_alertEmail');
                                 Navigator.pop(_globleContext);
-                                showGlobleDialog(
+                                Dialogs.showDialogTMC(
                                     _globleContext,
                                     'SCCESS',
                                     'ReSet Password link deliverd to Your Email',
@@ -425,7 +438,7 @@ extension loginFunc on _LoginState {
                                 showErrorMessage('dddd');
                                 Navigator.pop(_globleContext);
 
-                                showGlobleDialog(
+                                Dialogs.showDialogTMC(
                                     _globleContext, 'error', 'eeee', null);
                                 showCircularProgress(false);
                               }

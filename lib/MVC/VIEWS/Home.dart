@@ -1,6 +1,4 @@
 
-import 'package:face_tag/MVC/CONTROLLERS/BaseAuth.dart';
-import 'package:face_tag/MVC/VIEWS/Root.dart';
 import 'package:face_tag/MVC/VIEWS/SideMenu.dart';
 import 'package:flutter/material.dart';
 class Home extends StatefulWidget {
@@ -47,12 +45,7 @@ class _HomeState extends State<Home>
             children: <Widget>[
               Text('Wel Come'),
               FlatButton(onPressed: (){
-                final Auth auth = Auth();
-                auth.signOut();
-                Navigator.push(context, 
-                MaterialPageRoute(builder: (context)=>Root(),
-                fullscreenDialog: true)
-                ); 
+                
 
                 
               }, child: Text('SigenOut'))

@@ -50,7 +50,7 @@ class _RootState extends State<Root> {
     
   }
 
-  Widget _buildWaitingScreen() {
+Widget _buildWaitingScreen() {
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
