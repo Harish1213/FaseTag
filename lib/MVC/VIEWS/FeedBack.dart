@@ -9,7 +9,8 @@ class FeedBack extends StatefulWidget {
 class _FeedBackState extends State<FeedBack>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-
+String _message;
+String _subject;
   @override
   void initState() {
     super.initState();
@@ -90,9 +91,8 @@ class _FeedBackState extends State<FeedBack>
                   )),
             ),
             onChanged: (strValue) {
-              setState(() {
-                //_uMobile = strValue;
-              });
+              _subject = strValue;
+              debugPrint(_subject);
             },
           ),
         ),
@@ -115,7 +115,7 @@ class _FeedBackState extends State<FeedBack>
           ),
           decoration: InputDecoration(
             hintText: 'Enter MEassage here..',
-            fillColor: Colors.orange,
+            fillColor: Colors.orangeAccent,
             filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(40),
@@ -125,9 +125,12 @@ class _FeedBackState extends State<FeedBack>
                 style: BorderStyle.solid
               )
             ),
-            )
-            
-            ,
+            ),
+            onChanged: (value){
+              _message = value;
+              debugPrint('$_message');
+
+            }
         ),),
       ],
     );
