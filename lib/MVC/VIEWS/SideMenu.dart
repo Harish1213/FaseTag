@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:face_tag/MVC/VIEWS/FAQVC.dart';
 import 'package:face_tag/MVC/VIEWS/FeedBack.dart';
 import 'package:face_tag/MVC/VIEWS/Home.dart';
 import 'package:face_tag/MVC/VIEWS/Profile.dart';
@@ -80,6 +81,17 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(Icons.terrain),
+            title: Text('FAQ'),
+            onTap: (){
+              Navigator.of(context).pop();
+              Future.delayed(Duration(milliseconds:200),(){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FAQVC(),
+                fullscreenDialog: true));
+              });
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
@@ -94,6 +106,7 @@ class SideMenu extends StatelessWidget {
               });
             },
           ),
+          
         ],
       ),
     );
