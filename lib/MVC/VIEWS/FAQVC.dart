@@ -1,5 +1,6 @@
 import 'package:face_tag/MVC/VIEWS/SideMenu.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FAQVC extends StatefulWidget {
   @override
@@ -39,6 +40,7 @@ class _FAQVCState extends State<FAQVC> with SingleTickerProviderStateMixin {
           child: ListTile(
             leading: Icon(Icons.local_laundry_service),
             title: Text('Tearm & condition'),
+            onTap: _launchURL,
           ),
         ),
         Card(
@@ -68,4 +70,14 @@ class _FAQVCState extends State<FAQVC> with SingleTickerProviderStateMixin {
       ],
     );
   }
+
+
+ _launchURL() async {
+  const url = "https://google.com"; 
+  if (await canLaunch(url)) { 
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 }
